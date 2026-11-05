@@ -3,178 +3,271 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Twitter/X Link Cleaner</title>
-<meta name="description" content="Strips tracking parameters from X/Twitter links and lets you choose the base domain they copy with.">
+<title>Twitter/X Link Cleaner — Specification</title>
+<meta name="description" content="A specification for what the Twitter/X Link Cleaner extension does to a copied link: removes the query string, preserves the path, substitutes the host on request.">
 <link rel="icon" href="icon-128.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header class="masthead">
-  <a class="mark" href="#top">
-    <img src="icon-128.png" alt="" width="28" height="28">
-    <span>Link Cleaner</span>
-  </a>
-  <nav class="jump">
-    <a href="#install">Install</a>
-    <a href="#limits">Limits</a>
-    <a href="https://github.com/vera2077/x-link-cleaner" rel="noopener">Source</a>
-  </nav>
-</header>
+<div class="page">
 
-<main id="top">
+  <div class="runhead">
+    <span class="runhead__id">XLC-3.0</span>
+    <span class="runhead__nav">
+      <a href="#install">Install</a>
+      <a href="https://github.com/vera2077/x-link-cleaner" rel="noopener">Source</a>
+    </span>
+  </div>
 
-  <section class="hero">
-    <div class="hero__copy">
-      <h1>Copy the link.<br>Not the tail.</h1>
-      <p class="lede">
-        X appends tracking parameters to every link you copy. This extension
-        removes them, then points the link at whichever domain you prefer.
+  <header class="doc">
+    <h1 class="doc__title">Twitter/X Link Cleaner</h1>
+    <p class="doc__sub">A specification for what this extension does to a link you copy from X.</p>
+
+    <dl class="doc__meta">
+      <div><dt>Version</dt><dd>3.0</dd></div>
+      <div><dt>Status</dt><dd>Published</dd></div>
+      <div><dt>Updated</dt><dd>5 November 2026</dd></div>
+      <div><dt>License</dt><dd>MIT</dd></div>
+      <div><dt>Applies to</dt><dd>x.com, twitter.com</dd></div>
+      <div><dt>Obtain</dt><dd><a href="https://addons.mozilla.org/en-US/firefox/addon/twitter-x-link-cleaner/">Firefox Add-ons</a>, <a href="https://greasyfork.org/en/scripts/603878-twitter-x-link-cleaner">Greasy Fork</a></dd></div>
+    </dl>
+  </header>
+
+  <section class="sec">
+    <div class="sec__head">
+      <span class="sec__num">1</span>
+      <h2 class="sec__title">Scope</h2>
+    </div>
+    <div class="sec__body">
+      <p>
+        Every link copied from X carries a query string identifying how and
+        where it was shared. This document describes what happens to those links
+        once the extension is installed. It applies to links copied on
+        <code>x.com</code> and <code>twitter.com</code>, including their mobile
+        web variants.
       </p>
-      <p class="hero__meta">
-        <span class="tag tag--ink">v3.0</span>
-        <span>Firefox 109+ · Chrome · Android</span>
+      <p>
+        It does not describe the extension's internals, only its observable
+        output.
       </p>
     </div>
+  </section>
 
-    <div class="demo" aria-label="Interactive link cleaner">
-      <div class="demo__line demo__line--before">
-        <span class="demo__label">You copy</span>
-        <code class="url" id="demo-before"></code>
-      </div>
+  <section class="sec">
+    <div class="sec__head">
+      <span class="sec__num">2</span>
+      <h2 class="sec__title">Link transformation</h2>
+    </div>
+    <div class="sec__body">
+      <p>
+        X's Copy Link control produces a URL whose query string tracks the share.
+        The extension replaces what reaches the clipboard.
+      </p>
 
-      <div class="demo__rule" aria-hidden="true"></div>
+      <figure class="fig">
+        <div class="fig__frame">
+          <div class="fig__row">
+            <span class="fig__key">copied</span>
+            <code class="fig__url">https://x.com/jack/status/20<span class="redacted" tabindex="0" aria-label="Removed query string: s=20 and t=Gv3Fy2Xb">?s=20&amp;t=Gv3Fy2Xb</span></code>
+          </div>
+          <div class="fig__row">
+            <span class="fig__key">pasted</span>
+            <code class="fig__url">https://x.com/jack/status/20</code>
+          </div>
+        </div>
+        <figcaption class="fig__cap">
+          Figure 1 — Output of the Copy Link control, before and after. The query
+          string is redacted: hover it, or focus it with the keyboard, to read
+          what was taken.
+        </figcaption>
+      </figure>
 
-      <div class="demo__line demo__line--after">
-        <span class="demo__label">You paste</span>
-        <code class="url" id="demo-after"></code>
-      </div>
+      <ol class="rules">
+        <li>
+          <span class="rules__num">2.1</span>
+          <span class="rules__text">
+            The query string is removed in full. No parameters are filtered
+            selectively; the entire component is dropped.
+          </span>
+        </li>
+        <li>
+          <span class="rules__num">2.2</span>
+          <span class="rules__text">
+            The path and any fragment are preserved exactly as X wrote them.
+          </span>
+        </li>
+        <li>
+          <span class="rules__num">2.3</span>
+          <span class="rules__text">
+            When copied text contains a link rather than being one, the link
+            inside the text is rewritten and the surrounding text is left alone.
+          </span>
+        </li>
+        <li>
+          <span class="rules__num">2.4</span>
+          <span class="rules__text">
+            Links to hosts other than X and Twitter are not touched.
+          </span>
+        </li>
+      </ol>
+    </div>
+  </section>
 
-      <div class="demo__controls">
-        <fieldset class="domains">
-          <legend class="sr-only">Base domain</legend>
-          <label><input type="radio" name="domain" value="" checked><span>x.com</span></label>
-          <label><input type="radio" name="domain" value="fixvx.com"><span>fixvx</span></label>
-          <label><input type="radio" name="domain" value="fxtwitter.com"><span>fxtwitter</span></label>
-          <label><input type="radio" name="domain" value="vxtwitter.com"><span>vxtwitter</span></label>
+  <section class="sec">
+    <div class="sec__head">
+      <span class="sec__num">3</span>
+      <h2 class="sec__title">Host substitution</h2>
+    </div>
+    <div class="sec__body">
+      <p>
+        A copied link keeps its original host unless a replacement is configured.
+        When one is set, only the hostname changes; nothing else about the URL is
+        reconsidered.
+      </p>
+
+      <div class="subst">
+        <span class="subst__label" id="subst-label">Host</span>
+        <fieldset class="chips" aria-labelledby="subst-label">
+          <legend class="visually-hidden">Replacement host</legend>
+          <label><input type="radio" name="host" value="" checked><span>x.com</span></label>
+          <label><input type="radio" name="host" value="fixvx.com"><span>fixvx</span></label>
+          <label><input type="radio" name="host" value="fxtwitter.com"><span>fxtwitter</span></label>
+          <label><input type="radio" name="host" value="vxtwitter.com"><span>vxtwitter</span></label>
         </fieldset>
-        <p class="demo__tally" id="demo-tally"></p>
       </div>
 
-      <div class="pastable">
-        <label for="paste-input">Or paste a link to test</label>
-        <input id="paste-input" type="url" inputmode="url" spellcheck="false"
-               autocomplete="off" placeholder="https://x.com/jack/status/20?s=20&t=...">
-        <output id="paste-out" class="paste-out" aria-live="polite"></output>
+      <figure class="fig">
+        <div class="fig__frame fig__frame--result">
+          <div class="fig__row">
+            <span class="fig__key">result</span>
+            <code class="fig__url" id="result" aria-live="polite">https://x.com/jack/status/20</code>
+          </div>
+        </div>
+        <figcaption class="fig__cap">
+          Figure 2 — Result for the host selected above.
+          <span id="measure" class="fig__measure"></span>
+        </figcaption>
+      </figure>
+
+      <div class="check">
+        <label class="check__label" for="probe">Verify a specific link</label>
+        <input class="check__input" id="probe" type="url" inputmode="url" spellcheck="false"
+               autocomplete="off" placeholder="https://x.com/jack/status/20?s=20&amp;t=...">
+        <p class="check__out" id="probe-out" aria-live="polite"></p>
       </div>
     </div>
   </section>
 
-  <section class="what">
-    <h2>What comes off</h2>
-    <div class="split">
-      <div>
-        <p>
-          The query string is dropped entirely — <code>?s=20&amp;t=Gv3Fy2Xb</code>
-          and everything like it. What survives is the part that identifies the
-          post: the author handle and the status path.
-        </p>
-        <p>
-          If you set a base domain, only the hostname is swapped. Path, fragment,
-          and structure stay exactly as X wrote them.
-        </p>
-      </div>
-      <dl class="facts">
-        <div><dt>Tracking params</dt><dd>Removed</dd></div>
-        <div><dt>Post path</dt><dd>Kept</dd></div>
-        <div><dt>Text you copy</dt><dd>Cleaned too</dd></div>
-        <div><dt>Network requests</dt><dd>None</dd></div>
+  <section class="sec" id="install">
+    <div class="sec__head">
+      <span class="sec__num">4</span>
+      <h2 class="sec__title">Obtaining a copy</h2>
+    </div>
+    <div class="sec__body">
+      <dl class="methods">
+        <div class="method">
+          <dt>Firefox</dt>
+          <dd>
+            <p>Signed and distributed through addons.mozilla.org. Updates apply automatically. Also listed for Firefox for Android 142 and later, where it appears in the browser menu.</p>
+            <p><a class="btn" href="https://addons.mozilla.org/en-US/firefox/addon/twitter-x-link-cleaner/">Add to Firefox</a></p>
+          </dd>
+        </div>
+        <div class="method">
+          <dt>Chromium browsers</dt>
+          <dd>
+            <p>
+              Chrome, Edge, and Brave require an unpacked build, because the
+              Chrome Web Store levies a one-time developer registration fee.
+              Download the archive, extract it, open <code>chrome://extensions</code>,
+              enable Developer mode, and choose Load unpacked.
+            </p>
+            <p><a class="btn btn--quiet" href="https://github.com/vera2077/x-link-cleaner/raw/main/dist/twitter-x-link-cleaner-v3.0.zip">Download the archive</a></p>
+            <p class="note">Chrome asks about developer-mode extensions at each start. The userscript avoids that.</p>
+          </dd>
+        </div>
+        <div class="method">
+          <dt>Userscript</dt>
+          <dd>
+            <p>
+              Runs under Tampermonkey, Violentmonkey, or ScriptCat on any
+              supported browser, mobile included. Same behaviour, different
+              delivery.
+            </p>
+            <p><a class="btn btn--quiet" href="https://greasyfork.org/en/scripts/603878-twitter-x-link-cleaner">Install from Greasy Fork</a></p>
+          </dd>
+        </div>
       </dl>
     </div>
   </section>
 
-  <section id="install" class="install">
-    <h2>Install</h2>
-
-    <article class="method">
-      <h3>Firefox</h3>
-      <p>Signed through addons.mozilla.org. One click, updates automatically.</p>
-      <p class="method__actions">
-        <a class="button" href="https://addons.mozilla.org/en-US/firefox/addon/twitter-x-link-cleaner/">Add to Firefox</a>
-      </p>
-      <p class="method__note">Also available for Firefox for Android 142+, from the browser menu.</p>
-    </article>
-
-    <article class="method">
-      <h3>Chrome, Edge, Brave</h3>
+  <section class="sec">
+    <div class="sec__head">
+      <span class="sec__num">5</span>
+      <h2 class="sec__title">Non-goals</h2>
+    </div>
+    <div class="sec__body">
       <p>
-        The Chrome Web Store charges a one-time developer fee, so this ships
-        unpacked. Download the zip, extract it, then load it:
+        Stated plainly, because these are the cases where the extension will
+        disappoint someone.
       </p>
-      <ol class="steps">
-        <li>Open <code>chrome://extensions</code></li>
-        <li>Turn on <strong>Developer mode</strong></li>
-        <li>Click <strong>Load unpacked</strong> and pick the extracted folder</li>
+      <ol class="rules">
+        <li>
+          <span class="rules__num">5.1</span>
+          <span class="rules__text">
+            <strong>It does not make a front-end trustworthy.</strong> Choosing
+            fixvx, fxtwitter, or vxtwitter means whoever opens your link visits
+            that service instead of x.com. The extension itself contacts nothing,
+            but your recipients do.
+          </span>
+        </li>
+        <li>
+          <span class="rules__num">5.2</span>
+          <span class="rules__text">
+            <strong>It does not repair X's mobile menu.</strong> The Copy Link
+            item comes and goes in the mobile web interface, so on phones the
+            copy-event path does most of the work.
+          </span>
+        </li>
+        <li>
+          <span class="rules__num">5.3</span>
+          <span class="rules__text">
+            <strong>It does not validate the destination.</strong> A host that
+            fails validation is discarded and the original retained. Nothing is
+            checked for reachability.
+          </span>
+        </li>
       </ol>
-      <p class="method__actions">
-        <a class="button button--quiet" href="https://github.com/vera2077/x-link-cleaner/raw/main/dist/twitter-x-link-cleaner-v3.0.zip">Download the zip</a>
-      </p>
-      <p class="method__note">
-        Chrome will ask whether to keep developer-mode extensions on each start.
-        If that bothers you, use the userscript instead.
-      </p>
-    </article>
-
-    <article class="method">
-      <h3>Any browser, via userscript</h3>
-      <p>
-        Needs Tampermonkey, Violentmonkey, or ScriptCat. Same features, no
-        developer mode, and it works on mobile.
-      </p>
-      <p class="method__actions">
-        <a class="button button--quiet" href="https://greasyfork.org/en/scripts/603878-twitter-x-link-cleaner">Install from Greasy Fork</a>
-      </p>
-    </article>
+    </div>
   </section>
 
-  <section id="limits" class="limits">
-    <h2>Where it stops</h2>
-    <ul class="limits__list">
-      <li>
-        <strong>Front-end domains are third parties.</strong> Choosing fixvx,
-        fxtwitter, or vxtwitter means whoever opens your link visits that service
-        instead of x.com. The extension contacts nothing, but your recipients do.
-      </li>
-      <li>
-        <strong>X's mobile menu is inconsistent.</strong> The Copy Link item comes
-        and goes in the mobile web UI, so on phones the copy-event path does most
-        of the work.
-      </li>
-      <li>
-        <strong>It only runs on x.com and twitter.com.</strong> Links copied from
-        elsewhere are untouched.
-      </li>
-      <li>
-        <strong>Invalid domains fall back silently.</strong> Type something that
-        isn't a domain and the original host is kept rather than saved.
-      </li>
-    </ul>
-  </section>
+  <footer class="colophon">
+    <div class="colophon__row">
+      <span class="colophon__key">Set in</span>
+      <span>Spectral and IBM Plex Mono</span>
+    </div>
+    <div class="colophon__row">
+      <span class="colophon__key">Published by</span>
+      <span><a href="https://github.com/vera2077" rel="noopener">birbium</a></span>
+    </div>
+    <div class="colophon__row">
+      <span class="colophon__key">Source</span>
+      <span><a href="https://github.com/vera2077/x-link-cleaner" rel="noopener">vera2077/x-link-cleaner</a></span>
+    </div>
+    <div class="colophon__row">
+      <span class="colophon__key">Elsewhere</span>
+      <span>
+        <a href="https://addons.mozilla.org/en-US/firefox/addon/twitter-x-link-cleaner/">Firefox Add-ons</a>,
+        <a href="https://greasyfork.org/en/scripts/603878-twitter-x-link-cleaner">Greasy Fork</a>
+      </span>
+    </div>
+    <p class="colophon__end">Licensed MIT. No analytics, no accounts, nothing leaves your browser.</p>
+  </footer>
 
-</main>
-
-<footer class="foot">
-  <p>Twitter/X Link Cleaner by <a href="https://github.com/vera2077" rel="noopener">birbium</a> · MIT licensed</p>
-  <p class="foot__note">
-    <a href="https://addons.mozilla.org/en-US/firefox/addon/twitter-x-link-cleaner/">Firefox Add-ons</a> ·
-    <a href="https://greasyfork.org/en/scripts/603878-twitter-x-link-cleaner">Greasy Fork</a> ·
-    <a href="https://github.com/vera2077/x-link-cleaner">Source</a>
-  </p>
-  <p class="foot__note">No analytics. No accounts. Nothing leaves your browser.</p>
-</footer>
+</div>
 
 <script src="demo.js"></script>
 </body>
