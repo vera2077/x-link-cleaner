@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twitter/X Link Cleaner</title>
+<meta name="description" content="Strips tracking parameters from X/Twitter links and lets you choose the base domain they copy with.">
+<link rel="icon" href="icon-128.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="masthead">
+  <a class="mark" href="#top">
+    <img src="icon-128.png" alt="" width="28" height="28">
+    <span>Link Cleaner</span>
+  </a>
+  <nav class="jump">
+    <a href="#install">Install</a>
+    <a href="#limits">Limits</a>
+    <a href="https://github.com/USERNAME/x-link-cleaner" rel="noopener">Source</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero__copy">
+      <h1>Copy the link.<br>Not the tail.</h1>
+      <p class="lede">
+        X appends tracking parameters to every link you copy. This extension
+        removes them, then points the link at whichever domain you prefer.
+      </p>
+      <p class="hero__meta">
+        <span class="tag tag--ink">v3.0</span>
+        <span>Firefox 109+ · Chrome · Android</span>
+      </p>
+    </div>
+
+    <div class="demo" aria-label="Interactive link cleaner">
+      <div class="demo__line demo__line--before">
+        <span class="demo__label">You copy</span>
+        <code class="url" id="demo-before"></code>
+      </div>
+
+      <div class="demo__rule" aria-hidden="true"></div>
+
+      <div class="demo__line demo__line--after">
+        <span class="demo__label">You paste</span>
+        <code class="url" id="demo-after"></code>
+      </div>
+
+      <div class="demo__controls">
+        <fieldset class="domains">
+          <legend class="sr-only">Base domain</legend>
+          <label><input type="radio" name="domain" value="" checked><span>x.com</span></label>
+          <label><input type="radio" name="domain" value="fixvx.com"><span>fixvx</span></label>
+          <label><input type="radio" name="domain" value="fxtwitter.com"><span>fxtwitter</span></label>
+          <label><input type="radio" name="domain" value="vxtwitter.com"><span>vxtwitter</span></label>
+        </fieldset>
+        <p class="demo__tally" id="demo-tally"></p>
+      </div>
+
+      <div class="pastable">
+        <label for="paste-input">Or paste a link to test</label>
+        <input id="paste-input" type="url" inputmode="url" spellcheck="false"
+               autocomplete="off" placeholder="https://x.com/jack/status/20?s=20&t=...">
+        <output id="paste-out" class="paste-out" aria-live="polite"></output>
+      </div>
+    </div>
+  </section>
+
+  <section class="what">
+    <h2>What comes off</h2>
+    <div class="split">
+      <div>
+        <p>
+          The query string is dropped entirely — <code>?s=20&amp;t=Gv3Fy2Xb</code>
+          and everything like it. What survives is the part that identifies the
+          post: the author handle and the status path.
+        </p>
+        <p>
+          If you set a base domain, only the hostname is swapped. Path, fragment,
+          and structure stay exactly as X wrote them.
+        </p>
+      </div>
+      <dl class="facts">
+        <div><dt>Tracking params</dt><dd>Removed</dd></div>
+        <div><dt>Post path</dt><dd>Kept</dd></div>
+        <div><dt>Text you copy</dt><dd>Cleaned too</dd></div>
+        <div><dt>Network requests</dt><dd>None</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="install" class="install">
+    <h2>Install</h2>
+
+    <article class="method">
+      <h3>Firefox</h3>
+      <p>Signed through addons.mozilla.org. One click, updates automatically.</p>
+      <p class="method__note">Also available for Firefox for Android 142+, from the browser menu.</p>
+    </article>
+
+    <article class="method">
+      <h3>Chrome, Edge, Brave</h3>
+      <p>
+        The Chrome Web Store charges a one-time developer fee, so this ships
+        unpacked. Download the zip, extract it, then load it:
+      </p>
+      <ol class="steps">
+        <li>Open <code>chrome://extensions</code></li>
+        <li>Turn on <strong>Developer mode</strong></li>
+        <li>Click <strong>Load unpacked</strong> and pick the extracted folder</li>
+      </ol>
+      <p class="method__note">
+        Chrome will ask whether to keep developer-mode extensions on each start.
+        If that bothers you, use the userscript instead.
+      </p>
+    </article>
+
+    <article class="method">
+      <h3>Any browser, via userscript</h3>
+      <p>
+        Needs Tampermonkey, Violentmonkey, or ScriptCat. Same features, no
+        developer mode, and it works on mobile.
+      </p>
+    </article>
+  </section>
+
+  <section id="limits" class="limits">
+    <h2>Where it stops</h2>
+    <ul class="limits__list">
+      <li>
+        <strong>Front-end domains are third parties.</strong> Choosing fixvx,
+        fxtwitter, or vxtwitter means whoever opens your link visits that service
+        instead of x.com. The extension contacts nothing, but your recipients do.
+      </li>
+      <li>
+        <strong>X's mobile menu is inconsistent.</strong> The Copy Link item comes
+        and goes in the mobile web UI, so on phones the copy-event path does most
+        of the work.
+      </li>
+      <li>
+        <strong>It only runs on x.com and twitter.com.</strong> Links copied from
+        elsewhere are untouched.
+      </li>
+      <li>
+        <strong>Invalid domains fall back silently.</strong> Type something that
+        isn't a domain and the original host is kept rather than saved.
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p>Twitter/X Link Cleaner by <a href="https://github.com/USERNAME" rel="noopener">birbium</a> · MIT licensed</p>
+  <p class="foot__note">No analytics. No accounts. Nothing leaves your browser.</p>
+</footer>
+
+<script src="demo.js"></script>
+</body>
+</html>

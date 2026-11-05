@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Twitter/X Link Cleaner",
+  "version": "3.0",
+  "description": "Strips tracking parameters from X/Twitter links and lets you choose the base domain they are copied with",
+  "author": "birbium",
+  "permissions": [
+    "clipboardWrite",
+    "storage"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{42c11a0f-c03c-4419-8a49-e43388573e35}",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
+  "action": {
+    "default_title": "Twitter/X Link Cleaner",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://x.com/*",
+        "https://twitter.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

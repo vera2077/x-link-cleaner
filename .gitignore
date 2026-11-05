@@ -1,0 +1,16 @@
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.log
+
+# Dependencies
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Local probes
+docs/__probe.html
+probe.html

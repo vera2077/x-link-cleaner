@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twitter/X Link Cleaner</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="header">
+    <svg class="header__icon" width="36" height="36" viewBox="0 0 48 48" role="img" aria-label="X Link Cleaner">
+      <defs>
+        <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#5ad2ff"/>
+          <stop offset="1" stop-color="#044496"/>
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="10.8" fill="url(#tileGrad)"/>
+      <rect x="0.7" y="0.7" width="46.6" height="46.6" rx="10.2" fill="none" stroke="#fff" stroke-opacity="0.2"/>
+      <g transform="rotate(-26 24 24)" fill="none" stroke-width="4.13">
+        <rect x="9.6" y="17.9" width="15.1" height="12.2" rx="6.1" stroke="#dde8f1"/>
+        <rect x="23.3" y="17.9" width="15.1" height="12.2" rx="6.1" stroke="#fff"/>
+      </g>
+      <path d="M38.5 3.94 Q39.86 8.24 44.16 9.6 Q39.86 10.96 38.5 15.26 Q37.14 10.96 32.84 9.6 Q37.14 8.24 38.5 3.94 Z" fill="#fff"/>
+      <path d="M42.4 13.7 Q42.98 15.52 44.8 16.1 Q42.98 16.68 42.4 18.5 Q41.82 16.68 40 16.1 Q41.82 15.52 42.4 13.7 Z" fill="#fff" fill-opacity="0.9"/>
+    </svg>
+    <div class="header__text">
+      <h1>X Link Cleaner <span>v3.0</span></h1>
+      <p>Clean copies, your domain.</p>
+    </div>
+  </header>
+
+  <main class="content">
+    <label class="switch-row">
+      <span class="switch-row__label">
+        <strong>Clean copied links</strong>
+        <small>Strip tracking parameters automatically</small>
+      </span>
+      <input id="enabled" type="checkbox" role="switch" checked>
+    </label>
+
+    <section class="field">
+      <label class="field__label" for="baseDomain">Base domain</label>
+      <div class="input-group">
+        <span class="input-group__prefix">https://</span>
+        <input id="baseDomain" type="text" inputmode="url" spellcheck="false"
+               autocomplete="off" placeholder="x.com" aria-describedby="baseHint">
+      </div>
+      <p id="baseHint" class="hint">Leave empty to keep the original x.com / twitter.com domain.</p>
+    </section>
+
+    <section class="presets" aria-label="Quick presets">
+      <button type="button" class="preset" data-domain="">Original</button>
+      <button type="button" class="preset" data-domain="fixvx.com">fixvx</button>
+      <button type="button" class="preset" data-domain="fxtwitter.com">fxtwitter</button>
+      <button type="button" class="preset" data-domain="vxtwitter.com">vxtwitter</button>
+    </section>
+
+    <section class="preview" aria-live="polite">
+      <span class="preview__label">Preview</span>
+      <code id="preview">https://x.com/jack/status/20</code>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span id="status" class="status">Changes save automatically</span>
+    <button id="reset" type="button" class="reset">Reset</button>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
