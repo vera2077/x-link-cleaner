@@ -80,3 +80,39 @@ hostInputs.forEach((input) => {
 probeEl.addEventListener('input', renderProbe);
 
 renderResult();
+
+// ---------------------------------------------------------------- theme
+
+(function initTheme() {
+  const root = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  const label = document.getElementById('theme-label');
+  if (!toggle || !label) return;
+
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function effectiveTheme() {
+    const explicit = root.getAttribute('data-theme');
+    if (explicit === 'dark' || explicit === 'light') return explicit;
+    return systemDark.matches ? 'dark' : 'light';
+  }
+
+  function paint() {
+    const theme = effectiveTheme();
+    const isDark = theme === 'dark';
+    label.textContent = isDark ? 'Light' : 'Dark';
+    toggle.setAttribute('aria-pressed', String(isDark));
+    toggle.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+
+  toggle.addEventListener('click', () => {
+    const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('xlc-theme', next); } catch (err) { /* ignore */ }
+    paint();
+  });
+
+  systemDark.addEventListener('change', paint);
+
+  paint();
+})();

@@ -10,6 +10,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script>
+  // Applied before first paint so a stored dark preference never flashes light.
+  (function () {
+    try {
+      var stored = localStorage.getItem('xlc-theme');
+      if (stored === 'dark' || stored === 'light') {
+        document.documentElement.setAttribute('data-theme', stored);
+      }
+    } catch (e) { /* private mode: fall back to the system preference */ }
+  })();
+</script>
 </head>
 <body>
 
@@ -18,6 +29,10 @@
   <div class="runhead">
     <span class="runhead__id">XLC-3.0</span>
     <span class="runhead__nav">
+      <button class="theme-switch" id="theme-toggle" type="button" aria-pressed="false">
+        <span class="theme-switch__glyph" aria-hidden="true"></span>
+        <span id="theme-label">Dark</span>
+      </button>
       <a href="#install">Install</a>
       <a href="https://github.com/vera2077/x-link-cleaner" rel="noopener">Source</a>
     </span>
