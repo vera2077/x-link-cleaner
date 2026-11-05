@@ -1,100 +1,176 @@
 # Publishing to GitHub
 
-The repository is initialised and committed locally. Three things need your
-account, so they can't be done from here: creating the remote, pushing, and
-enabling Pages.
+You have never pushed a repository before, so this walks through it from the
+start. Nothing here needs the GitHub CLI, and no code changes are pending — the
+repository is already committed and ready.
 
-## Before you push: replace the placeholders
+There are two ways to do this. **Option A** (GitHub Desktop) is the easiest if you
+would rather not touch a terminal. **Option B** uses the command line. Pick one.
 
-`USERNAME` appears in the site and README and must become your GitHub username.
+---
+
+## First: what "push" means
+
+A git repository on your computer holds commits — snapshots of your files. Right
+now those commits exist only on your machine. Creating a repository on GitHub
+makes an empty one on their servers, and "pushing" copies your commits up to it.
+
+You do this once. After that, pushing again just sends whatever changed.
+
+---
+
+## Option A — GitHub Desktop (recommended)
+
+1. Install [GitHub Desktop](https://desktop.github.com/) and sign in with your
+   GitHub account (`vera2077`).
+2. Menu: **File → Add local repository…**
+3. Choose the folder `C:\Users\melodi\Desktop\x-link-cleaner-repo`
+4. You should see the three existing commits under **History**.
+5. Click **Publish repository** at the top.
+6. Name it `x-link-cleaner`, keep **Keep this code private** *unchecked* (Pages
+   needs a public repo on a free account), and click **Publish repository**.
+
+That's it — the code is on GitHub.
+
+Then enable the website:
+
+7. In GitHub Desktop: **Repository → View on GitHub**
+8. On the GitHub page: **Settings** → **Pages**
+9. Under *Build and deployment*, set **Source** to `Deploy from a branch`
+10. Branch: **main**, folder: **/docs**, then **Save**
+11. Wait 1–3 minutes, then open <https://vera2077.github.io/x-link-cleaner/>
+
+---
+
+## Option B — Command line
+
+Open PowerShell and run these one at a time.
+
+**1. Go to the repository folder**
 
 ```powershell
-cd x-link-cleaner-repo
-
-# Set your GitHub username once
-$user = "your-github-username"
-
-# Replace every placeholder occurrence
-(Get-ChildItem -Recurse -File -Include *.html,*.md |
-  Where-Object { $_.FullName -notmatch '\\\.git\\' }) | ForEach-Object {
-    (Get-Content $_.FullName -Raw).Replace('USERNAME', $user) |
-      Set-Content $_.FullName -NoNewline -Encoding utf8
-}
-
-git add -A
-git commit -m "Point links at the real repository"
+cd "C:\Users\melodi\Desktop\x-link-cleaner-repo"
 ```
 
-That updates:
-
-- `docs/index.html` — the nav "Source" link and the footer profile link
-- `README.md` — the project-page link and the Firefox install link
-- `docs/demo.js` — nothing (no placeholders there)
-
-Also worth filling in before you publish:
-
-- `README.md` — the "Firefox" install section links to `#`; paste the real
-  addons.mozilla.org URL
-- `README.md` — the userscript section links to `#`; paste the Greasy Fork URL
-
-## Create the repository and push
-
-Using the GitHub website:
-
-1. Go to <https://github.com/new>
-2. Name it `x-link-cleaner`
-3. **Public**, and do **not** add a README, .gitignore, or license (they already exist)
-4. Create it, then run the two commands GitHub shows you, which will look like:
+**2. Check it looks right**
 
 ```powershell
-git remote add origin https://github.com/USERNAME/x-link-cleaner.git
+git log --oneline
+```
+
+You should see three commits, newest first. If you see
+`fatal: not a git repository`, you are in the wrong folder — check the path.
+
+**3. Create the empty repository on GitHub**
+
+Open <https://github.com/new> in your browser and fill in:
+
+- **Repository name:** `x-link-cleaner`
+- **Description:** optional, e.g. *Strips tracking parameters from X/Twitter links*
+- **Visibility:** Public
+- Leave **Add a README file** unchecked
+- Leave **Add .gitignore** set to *None*
+- Leave **Choose a license** set to *None*
+
+Click **Create repository**.
+
+> Those "leave unchecked" steps matter. If GitHub creates its own README or
+> license, your first push is rejected for having unrelated histories. If that
+> already happened, delete the repository on GitHub and create it again empty.
+
+**4. Connect your local repo to it**
+
+On the page GitHub shows you after creating the repo, find the section
+**…or push an existing repository from the command line**. Run its first line, which is:
+
+```powershell
+git remote add origin https://github.com/vera2077/x-link-cleaner.git
+```
+
+**5. Push**
+
+```powershell
 git push -u origin main
 ```
 
-## Turn on GitHub Pages
+A browser window will open asking you to sign in to GitHub. Approve it. (Git no
+longer accepts your account password here — it uses a browser sign-in or a
+personal access token. The browser prompt is the normal path on Windows.)
 
-1. Open the repo → **Settings** → **Pages**
-2. Under **Build and deployment**, set **Source** to `Deploy from a branch`
-3. Branch: `main`, folder: `/docs`
-4. Save
+When it finishes, refresh the GitHub page. Your files are there.
 
-The site appears at `https://USERNAME.github.io/x-link-cleaner/` after a minute
-or two. The first deploy often takes longer; watch the **Actions** tab.
+**6. Turn on the website**
 
-`docs/.nojekyll` is already committed and does not need Jekyll config.
+1. Repo page → **Settings** (top bar)
+2. Left sidebar → **Pages**
+3. *Source*: `Deploy from a branch`
+4. *Branch*: `main`, folder: `/docs`
+5. **Save**
 
-## After the site is live
+Watch the **Actions** tab. When the deploy job goes green, the site is live at
+<https://vera2077.github.io/x-link-cleaner/>.
 
-Add the URL to the repository's **About** panel (top right of the repo page →
-gear icon → *Website*), and add topics like `browser-extension`,
-`twitter`, `privacy`.
+---
+
+## If something goes wrong
+
+| Message | What it means | Fix |
+|---|---|---|
+| `remote origin already exists` | A remote is already set | `git remote set-url origin https://github.com/vera2077/x-link-cleaner.git` |
+| `rejected ... fetch first` | GitHub's repo has commits yours doesn't (usually an auto-made README) | Delete the GitHub repo, recreate it empty, push again |
+| `fatal: not a git repository` | Wrong folder | `cd` into `x-link-cleaner-repo` and retry |
+| `Authentication failed` | Password used instead of browser sign-in | Re-run `git push -u origin main` and complete the browser prompt |
+| 404 on the Pages URL | Deploy still running, or wrong folder | Check Actions tab; confirm folder is exactly `/docs` |
+
+---
+
+## After it works
+
+- On the repo page, click the gear next to **About** and set **Website** to
+  `https://vera2077.github.io/x-link-cleaner/`, then add topics such as
+  `browser-extension`, `twitter`, `privacy`.
+- The download button on the site points at
+  `https://github.com/vera2077/x-link-cleaner/raw/main/dist/twitter-x-link-cleaner-v3.0.zip`,
+  which works as soon as the repo is public.
+
+## Making changes later
+
+```powershell
+cd "C:\Users\melodi\Desktop\x-link-cleaner-repo"
+# ...edit files...
+git add -A
+git commit -m "Describe what changed"
+git push
+```
 
 ## Cutting a new release
 
 1. Bump `version` in `extension/manifest.json` and `@version` in
    `dist/x-link-cleaner.user.js`
-2. Rebuild the zip:
+2. Rebuild the zip so paths use forward slashes (PowerShell's `Compress-Archive`
+   writes backslashes, which addons.mozilla.org rejects):
 
 ```powershell
 python scripts/build.py
 ```
 
-That writes `dist/twitter-x-link-cleaner-v<version>.zip` with forward-slash paths
-and verifies the result. (PowerShell's `Compress-Archive` writes backslashes,
-which addons.mozilla.org rejects with "Invalid file name in archive".)
-
-3. Commit, then tag it:
+3. Commit the new zip, then tag it and push the tag:
 
 ```powershell
+git add -A
+git commit -m "v3.1"
 git tag -a v3.1 -m "v3.1"
-git push origin main --tags
+git push
+git push origin v3.1
 ```
 
-4. On GitHub, **Releases** → **Draft a new release** → pick the tag → attach the
-   zip → publish. Attaching the zip to the release means the download link in the
-   README can be a stable release URL instead of a raw file path.
+4. On GitHub: **Releases** → **Draft a new release** → choose the tag, attach the
+   zip from `dist/`, and publish.
 
-## Checking the package before uploading anywhere
+## Checking the package before uploading to AMO
 
-`npx web-ext lint --source-dir extension` reports what addons.mozilla.org will.
+```powershell
+npx web-ext lint --source-dir extension
+```
+
 It currently reports zero errors and zero warnings.

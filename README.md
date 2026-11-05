@@ -20,7 +20,12 @@ Or, if you set a base domain to `fixvx`:
 https://fixvx.com/jack/status/20
 ```
 
-**[Project page](https://USERNAME.github.io/x-link-cleaner/)** · **[Install](#install)**
+**[Project page](https://vera2077.github.io/x-link-cleaner/)** · **[Install](#install)**
+
+[![Firefox Add-ons](https://img.shields.io/amo/v/twitter-x-link-cleaner?label=Firefox&logo=firefoxbrowser)](https://addons.mozilla.org/en-US/firefox/addon/twitter-x-link-cleaner/)
+[![Greasy Fork](https://img.shields.io/badge/Greasy%20Fork-userscript-black)](https://greasyfork.org/en/scripts/603878-twitter-x-link-cleaner)
+
+Signed for Firefox, available as a userscript everywhere else.
 
 ## Features
 
@@ -36,7 +41,7 @@ https://fixvx.com/jack/status/20
 
 ### Firefox
 
-Install from [addons.mozilla.org](#) — signed, one click, updates automatically. Also listed for Firefox for Android 142+.
+Install from [addons.mozilla.org](https://addons.mozilla.org/en-US/firefox/addon/twitter-x-link-cleaner/) — signed, one click, updates automatically. Also listed for Firefox for Android 142+.
 
 ### Chrome, Edge, Brave
 
@@ -51,7 +56,7 @@ Chrome will prompt about developer-mode extensions on startup. If that is annoyi
 
 ### Userscript
 
-Works in Tampermonkey, Violentmonkey, and ScriptCat, including on mobile. See [x-link-cleaner.user.js](#).
+Works in Tampermonkey, Violentmonkey, and ScriptCat, including on mobile. Install from [Greasy Fork](https://greasyfork.org/en/scripts/603878-twitter-x-link-cleaner), or use [the script in this repository](dist/x-link-cleaner.user.js).
 
 ## How it works
 
